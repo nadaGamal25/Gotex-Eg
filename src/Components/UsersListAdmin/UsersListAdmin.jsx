@@ -210,7 +210,7 @@ const [marketerid, setMarketerid] = useState('');
                 {item.email?<td>{item.email}</td>:<td>_</td>}
                 {item.address?<td>{item.address}</td>:<td>_</td>}
                 {item.cr && item.cr[0] ? (
-        <td><a className='text-danger' href={item.cr[0].replace('public', 'https://dashboard.go-tex.net/gotex-co-test')} target='_blank'>ملف التوثيق</a>
+        <td><a className='text-danger' href={item.cr[0].replace('public', 'https://dashboard.go-tex.net/eg-co-test')} target='_blank'>ملف التوثيق</a>
           </td>
       ) : (
         <td>_</td>

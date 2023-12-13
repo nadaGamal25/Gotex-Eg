@@ -36,7 +36,7 @@ export default function Wallet() {
           
           <div className="balance-box d-flex p-4 mt-4 justify-content-center align-items-center">
             <h5>الرصيد الحالى : </h5>
-            <h3 className='pe-2'> {userBalance} ر.س </h3>
+            <h3 className='pe-2'> {userBalance} جنيه</h3>
             
           </div>
         </div>  </>    

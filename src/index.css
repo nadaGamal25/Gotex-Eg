@@ -123,6 +123,17 @@ label{
   color: #fff !important;
 
 }
+.btn-lightblue2{
+  background-color:var(--dark--color) !important;
+  color: #fff !important;
+  border: none !important;
+
+}
+.btn-lightblue2:hover{
+  background-color: #22536d !important;
+  color: #fff !important;
+
+}
 .txt-dark{
   color: var(--dark--color) !important;
 }
@@ -139,6 +150,25 @@ label{
   overflow-x: scroll;
 }
 .gray-table th{
+  color: var(--dark--color);
+}
+.edit-form{
+  width: 80%;
+  margin: auto;
+}
+.edit-form h5{
+  font-weight: 600;
+}
+@media only screen and (max-width: 768px){
+  .edit-form{
+    width: 100%;
+  }
+}
+.light-box{
+  background-color: #f9f9f9;
+  border-radius: 15px;
+}
+.light-box h5{
   color: var(--dark--color);
 }
 /* login page */

@@ -53,18 +53,18 @@ export default function NavAdmin({userData ,logout}) {
                     <span class="text">المستخدمين</span>
                 </Link>
             </li>
-            {/* <li className=''>
+            <li className=''>
                 <Link  to="/companiesAdmin">
                     <i class="fa-solid fa-truck-fast bx"></i>
                     <span class="text">شركات الشحن</span>
                 </Link>
             </li>
-            <li>
+            {/* <li>
                 <Link to="/shipmentsAdmin">
                 <i class="fa-solid fa-box-open bx"></i>
                     <span class="text">الشحنات </span>
                 </Link>
-            </li> */}
+            </li>  */}
             
            
         </ul>

@@ -10,6 +10,7 @@ import spl from '../../assets/spl.jpg'
 import armx from '../../assets/armx.jpg'
 import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom'
+import Joi from 'joi'
 
 export default function CompaniesAdmin() {
     useEffect(()=>{
@@ -20,19 +21,104 @@ export default function CompaniesAdmin() {
           const [companies,setCompanies]=useState('')
           async function getAdmincompanies() {
             try {
-              const response = await axios.get('https://dashboard.go-tex.net/gotex-co-test/admin/companies/get-all',
+              const response = await axios.get('https://dashboard.go-tex.net/eg-co-test/company',
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem('userToken')}`,
                 },
               });
-              console.log(response.data.data.companies)
-              setCompanies(response.data.data.companies)
+              console.log(response)
+              setCompanies(response.data.data)
             } catch (error) {
               console.error(error);
             }
           }
 
+          const [errorList, seterrorList]= useState([]); 
+          const [Prices,setPrices] =useState({
+            userprice :'',
+            kgprice :'',
+            userCodPrice : '',
+          })
+          const [error , setError]= useState('')
+          const [isLoading, setisLoading] =useState(false)
+        
+          async function sendPricesToApi() {
+            console.log(localStorage.getItem('userToken'))
+            try {
+              const {data} = await axios.post(`https://dashboard.go-tex.net/eg-co-test/company/edit`, Prices,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+                },
+              });
+              if (data.msg === 'ok') {
+                console.log(data.msg)
+                setisLoading(false)
+                window.alert("تم التعديل بنجاح");
+                getAdmincompanies()
+              } else {
+                setisLoading(false)
+                setError(data.msg)
+                console.log(data.msg)
+              }
+            } catch (error) {
+              console.log(error);
+              window.alert('wrong');
+            }
+          }
+          
+        function submitPricesForm(e){
+          e.preventDefault();
+          setisLoading(true)
+          let validation = validatePricesForm();
+          console.log(validation);
+          if(validation.error){
+            setisLoading(false)
+            seterrorList(validation.error.details)
+        
+          }else{
+            sendPricesToApi();
+          }
+        
+        }
+        
+          function getPrices(e){
+            let myPrices={...Prices};
+            myPrices[e.target.name]= e.target.value;
+            setPrices(myPrices);
+            console.log(myPrices);
+          }
+        
+          function validatePricesForm(){
+            let scheme= Joi.object({
+                userprice:Joi.number().required(),
+                kgprice :Joi.number().required(),
+                userCodPrice :Joi.number().required(),
+        
+            });
+            return scheme.validate(Prices, {abortEarly:false});
+          }
+          useEffect(()=>{
+            getCompaniesDetailsOrders()
+          },[])
+          const [companiesDetails,setCompaniesDetails]=useState([])
+          async function getCompaniesDetailsOrders() {
+            try {
+              const response = await axios.get('https://dashboard.go-tex.net/eg-co-test/company');
+              const companiesPrices = response.data.data;
+              console.log(companiesPrices)
+              setCompaniesDetails(companiesPrices)
+              setPrices({
+                ...Prices,
+                userprice:companiesPrices.userprice,
+                kgprice:companiesPrices.kgprice,
+                userCodPrice:companiesPrices.codprice,
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }
   return (
     <>
     <div className='paddingCompanies p-3' id='content'>
@@ -41,205 +127,70 @@ export default function CompaniesAdmin() {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col"> الشركة</th>
+          <th scope="col">#</th>
+          <th scope="col">الشركة</th>            
             <th scope="col">سعر الدفع اونلاين</th>
             {/* <th scope="col">سعر المدخلات</th> */}
-            <th scope="col">سعر الزيادة </th>
+            <th scope="col">قيمة الزيادة </th>
             <th scope="col">سعر ال(COD)   </th>
             {/* <th scope="col">أكبر سعر للمسوقين  </th> */}
             {/* <th scope="col">أقل سعر للمسوقين  </th> */}
           </tr>
         </thead>
         <tbody>
-          {companies && companies.map((item,index) =>(
-            item !== null ? (
-              <tr key={index}>
-                <td>{index+1}</td>
-                {item.name ==="anwan"?<td>gotex</td>:<td>{item.name}</td>}
-                {item.userprice?<td>{item.userprice}</td>:<td>_</td>}
-                {/* {item.marketerprice?<td>{item.marketerprice}</td>:<td>_</td>} */}
-                {item.kgprice?<td>{item.kgprice}</td>:<td>_</td>}
-                {item.codprice?<td>{item.codprice}</td>:<td>_</td>}
-                {/* {item.maxcodmarkteer?<td>{item.maxcodmarkteer}</td>:<td>_</td>} */}
-                {/* {item.mincodmarkteer?<td>{item.mincodmarkteer}</td>:<td>_</td>} */}
+          {companies ? (
+              <tr>
+                <td></td>
+                {companies.name?<td>{companies.name}</td>:<td>_</td>}
+                {companies.userprice?<td>{companies.userprice}</td>:<td>_</td>}
+                {companies.kgprice?<td>{companies.kgprice}</td>:<td>_</td>}
+                {companies.codprice?<td>{companies.codprice}</td>:<td>_</td>}
               </tr>
             ): null
-          )
-          
-         
-          )}
+          }
         </tbody>
       </table>
      </div>
-     <div className="row g-4 py-3">
-        
-        <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={sae} alt="company" />
-              </div>
-              
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to="/saeeEdit" className="btn btn-lightblue">تعديل</Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={imile} alt="company" />
-              </div>
-              
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to="/imileEdit" className="btn btn-lightblue">تعديل</Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={spl} alt="company" />
-              </div>
-              
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to="#" className="btn btn-lightblue">قريبا</Link>
-              </div>
-            </div>
-          </div>
-          {/* <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img className='bg-white' src={logo} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to="/anwanEdit" className="btn btn-choose">تعديل</Link>
+     <div className=" py-3">
+              <div className="edit-form">
+                <div className="light-box p-3">
+                  <h5 className="text-center mb-3">تعديل السعر  </h5>
+                  <form onSubmit={submitPricesForm} action="">
+                    <label htmlFor="">سعر الدفع اونلاين</label>
+                    <input onChange={getPrices} type="number" value={Prices.userprice} step="0.001" className='my-input my-2 form-control' name='userprice' />
+                    {errorList.map((err,index)=>{
+      if(err.context.label ==='userprice'){
+        return <div key={index} className="alert alert-danger my-2">يجب ملىء جميع البيانات</div>
+      }
+      
+    })}
+                   
+                    <label htmlFor="">قيمة الزيادة</label>
+                    <input onChange={getPrices} type="number" value={Prices.kgprice} step="0.001" className='my-input my-2 form-control' name='kgprice' />
+                    {errorList.map((err,index)=>{
+      if(err.context.label ==='kgprice'){
+        return <div key={index} className="alert alert-danger my-2">يجب ملىء جميع البيانات</div>
+      }
+      
+    })}
+                    <label htmlFor="">سعر الدفع عند الاستلام</label>
+                    <input onChange={getPrices} type="number" value={Prices.userCodPrice} step="0.001" className='my-input my-2 form-control' name='userCodPrice' />
+                    {errorList.map((err,index)=>{
+      if(err.context.label ==='userCodPrice'){
+        return <div key={index} className="alert alert-danger my-2">يجب ملىء جميع البيانات</div>
+      }
+      
+    })}
+                    
+<div className="text-center">
+                    <button className='btn btn-primary mt-3'>
+                    {isLoading == true?<i class="fa-solid fa-spinner fa-spin"></i>:'تعديل'}
+                   </button>
+                   </div>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={armx} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to='/aramexEdit' className="btn btn-choose">تعديل</Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={sms} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to="/smsaEdit" className="btn btn-choose">تعديل</Link>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={glt} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-between">
-                <h4></h4>
-                <Link to='/gltEdit' className="btn btn-choose">تعديل</Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={jt} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-center">
-                <p className="soon-word">قريباً ...</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={jonex} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-center">
-                <p className="soon-word">قريباً ...</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-6">
-            <div className="company">
-              <div className="text-center">
-              <img src={mkan} alt="company" />
-              </div>
-              <div className="stars text-center mt-3">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              </div>
-              <div className="d-flex pt-4 justify-content-center">
-                <p className="soon-word">قريباً ...</p>
-              </div>
-            </div>
-          </div>
-           */}
-          
-          
-        </div>
      </div>
      </div>
     </>

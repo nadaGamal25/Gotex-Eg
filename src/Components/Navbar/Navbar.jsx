@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 // import generateApiKey from 'generate-api-key';
-
+// import pdfDocs from '../../../src/'
 
 export default function Navbar({userData ,logout}) {
     let navigate= useNavigate(); //hoke
@@ -66,12 +66,16 @@ export default function Navbar({userData ,logout}) {
           }
           const [showModal, setShowModal] = useState(false);
           const [depositAmount, setDepositAmount] = useState('');
+          const [countryCodeVaue, setcountryCodeVaue] = useState('');
+          const [mobileNumValue, setmobileNumValue] = useState('');
           async function addDepositToUser() {
             try {
               const response = await axios.post(
                 'https://dashboard.go-tex.net/eg-co-test/user/user-charge',
                 {
                   amount: depositAmount,
+                  countryCode:countryCodeVaue,
+                  mobileNumWithoutCode:mobileNumValue,
                 },
                 {
                   headers: {
@@ -92,6 +96,8 @@ export default function Navbar({userData ,logout}) {
               // }
             } catch (error) {
               console.error(error);
+              window.alert('يرجى ملئ جميع البيانات  ')
+
             }
           }
           const openModal = () => {
@@ -149,6 +155,8 @@ export default function Navbar({userData ,logout}) {
   const closeModalKey = () => {
     setShowModalKey(false);
   };
+
+  
   return (
     <>
     {/* <!-- start side navbar --> */} 
@@ -158,12 +166,13 @@ export default function Navbar({userData ,logout}) {
         </a>
        
         <ul class="side-menu top">
+        
             
         <li>
                 <Link to="/wallet">
                 <i class="fa-solid fa-sack-dollar bx"></i>
                 <span class="text">المحفظة
-                ({userBalance} ر.س)
+                ({userBalance})
                 </span>
                 </Link>
             </li>
@@ -193,6 +202,14 @@ export default function Navbar({userData ,logout}) {
                                   <span class="text">Generate api-test-key 
                 </span>
                 </Link>
+            </li>
+            <li>
+        <a 
+        // href={pdfDocs} 
+        target='_blank' className="btn btn-lightblue2" Download>
+        <i class="fa-solid fa-file-lines bx"></i>
+                Open Documentation
+              </a>
             </li>
             {/* <li>
                 <Link to="/apis">
@@ -243,25 +260,55 @@ export default function Navbar({userData ,logout}) {
               </div>
               <div className='modal-body'>
                 <div className='form-group'>
-                  <label htmlFor='deposit'>الرصيد :</label>
-                  <input
+                  <form>
+                <div className="row">
+                  <div className="col-md-4">
+                  <label htmlFor=''>مفتاح الدولة :</label>
+                  <input required
+                    type='text'
+                    className='form-control'
+                    placeholder='for example: 20'
+                    id=''
+                    // value={countryCodeVaue}   
+                    onChange={(e)=> setcountryCodeVaue(e.target.value)}                
+                  />
+                  </div>
+                  <div className="col-md-8">
+                  <label htmlFor=''>رقم الهاتف  :</label>
+                  <input required
+                    type='text'
+                    className='form-control'
+                    placeholder='for example: 1144123321'
+                    id=''
+                    // value={mobileNumValue}   
+                    onChange={(e)=> setmobileNumValue(e.target.value)}                
+                  />
+                  </div>
+                </div>
+                  <label htmlFor='deposit'>قيمة الرصيد :</label>
+                  <input required
                     type='number'
                     className='form-control'
                     id='deposit'
-                    value={depositAmount}
+                    // value={depositAmount}
                     onChange={handleDepositChange}
                    
                   />
-                </div>
-              </div>
-              <div className='modal-footer'>
-                <button
+                  <div className="text-center mt-2">
+                  <button
                   type='button'
                   className='btn btn-primary'
                   onClick={addDepositToUser}
                 >
                   إضافة
                 </button>
+                  </div>
+
+                  </form>
+                </div>
+              </div>
+              <div className='modal-footer'>
+                
                 <button
                   type='button'
                   className='btn btn-secondary'
@@ -291,7 +338,8 @@ export default function Navbar({userData ,logout}) {
           </Button>
           {/* Additional buttons or actions can be added here */}
         </Modal.Footer>
-      </Modal>  
+      </Modal> 
+       
     </>
   )
 }
