@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import {Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 // import generateApiKey from 'generate-api-key';
-// import pdfDocs from '../../../src/'
+import pdfDocs from '../../../src/Gotex_Eg_Doc.pdf'
 
 export default function Navbar({userData ,logout}) {
     let navigate= useNavigate(); //hoke
@@ -205,7 +205,7 @@ export default function Navbar({userData ,logout}) {
             </li>
             <li>
         <a 
-        // href={pdfDocs} 
+        href={pdfDocs} 
         target='_blank' className="btn btn-lightblue2" Download>
         <i class="fa-solid fa-file-lines bx"></i>
                 Open Documentation
