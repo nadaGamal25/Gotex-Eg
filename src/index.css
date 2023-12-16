@@ -134,6 +134,15 @@ label{
   color: #fff !important;
 
 }
+.btn-dark-blue{
+  background-color: var(--dark--color) !important;
+  color: #fff !important;
+  border: none !important;
+}
+.btn-dark-blue:hover{
+  background-color: #0c5276 !important;
+  color: #fff !important;
+}
 .txt-dark{
   color: var(--dark--color) !important;
 }

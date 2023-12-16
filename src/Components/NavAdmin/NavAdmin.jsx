@@ -59,12 +59,12 @@ export default function NavAdmin({userData ,logout}) {
                     <span class="text">شركات الشحن</span>
                 </Link>
             </li>
-            {/* <li>
+            <li>
                 <Link to="/shipmentsAdmin">
                 <i class="fa-solid fa-box-open bx"></i>
                     <span class="text">الشحنات </span>
                 </Link>
-            </li>  */}
+            </li> 
             
            
         </ul>
