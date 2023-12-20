@@ -96,7 +96,7 @@ export default function Navbar({userData ,logout}) {
               // }
             } catch (error) {
               console.error(error);
-              window.alert('يرجى ملئ جميع البيانات  ')
+              window.alert(`يرجى ملئ جميع البيانات  & ${error.response.data.error.message} `)
 
             }
           }

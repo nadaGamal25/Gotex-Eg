@@ -5,10 +5,7 @@ import Joi from 'joi';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png'
 
-export default function Login({saveUserData}) {
-        //  saveUserData();   37 line
-// export default function Login() {
-
+export default function MarketerLogin({saveUserData}) {
   let navigate= useNavigate(); //hoke
   const [errorList, seterrorList]= useState([]); 
   const [theUser,setUser] =useState({
@@ -23,9 +20,9 @@ export default function Login({saveUserData}) {
  
   async function sendLoginDataToApi(){
     try {
-      const {data} = await axios.post('https://dashboard.go-tex.net/eg-co-test/user/login', theUser);
+      const {data} = await axios.post('https://dashboard.go-tex.net/eg-co-test/marketer/login', theUser);
       if (data.msg === 'ok') {
-        navigate('/wallet');
+        navigate('/marketerShipments');
         localStorage.setItem('userToken', data.token);
         console.log(data.token);
         setisLoading(false);
@@ -39,26 +36,8 @@ export default function Login({saveUserData}) {
       console.log(error);
       window.alert('كلمة المرور او البريد الالكترونى قد يكون خطأ');
     }
-  } async function sendLoginAdminToApi(){
-    try {
-          const {data} = await axios.post('https://dashboard.go-tex.net/eg-co-test/admin/login', theUser);
-          if (data.msg === 'ok') {
-            navigate('/userListAdmin');
-            console.log(data.token)
-            setisLoading(false)
-            localStorage.setItem('userToken', data.token);
-            saveUserData();
-          } else {
-            setisLoading(false)
-
-            setError(data.msg)
-            console.log(data.msg)
-          }
-        } catch (error) {
-          console.log(error);
-          window.alert('كلمة المرور او البريد الالكترونى قد يكون خطأ');
-        }
-      }
+  } 
+  
 
         function submitLoginForm(e) {
           e.preventDefault();
@@ -69,11 +48,9 @@ export default function Login({saveUserData}) {
             setisLoading(false);
             seterrorList(validation.error.details);
           } else {
-            if (theUser.email === 'admin@gotex.com') {
-              sendLoginAdminToApi();
-            } else {
+            
               sendLoginDataToApi();
-            }
+            
           }
         }
 
@@ -126,17 +103,13 @@ export default function Login({saveUserData}) {
       
     })}
     </div>
-      <Link className='pt-2 txt-dark' to="/forgetPassword">هل نسيت كلمة المرور؟</Link> <br/>
       <div className="text-center">
       <button className='btn btn-orange'>
       {isLoading == true?<i class="fa-solid fa-spinner fa-spin"></i>:'تسجيل الدخول '}
       </button>
       </div>
      </form>
-     <div className='text-center sign-footer'>
-      <p className='p-footer'>هل أنت جديد فى المنصة؟ <Link className='sign-link txt-dark' to='/signUp'>قم بعمل حساب جديد..</Link> </p>
-     </div>
-    
+     
      </div>
      </div>
     </>

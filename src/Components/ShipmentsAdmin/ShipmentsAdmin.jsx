@@ -17,6 +17,7 @@ const [secondFilter, setSecondFilter] = useState(false);
   const [clientFilter, setClientFilter] = useState('');
 const [startDate, setStartDate] = useState('');
 const [endDate, setEndDate] = useState('');
+const [searchMarktercode, setSearchMarktercode] = useState('');
 
 
   async function getShipmentsAdmin() {
@@ -53,6 +54,7 @@ const [endDate, setEndDate] = useState('');
               limit: 30,
               paytype: searchPaytype,
               keyword:clientFilter,
+              marketerCode:searchMarktercode,
               // startDate:startDate,
               // endDate:endDate,
             },
@@ -81,6 +83,7 @@ const [endDate, setEndDate] = useState('');
               limit: 30,
               paytype: searchPaytype,
               keyword:clientFilter,
+              marketerCode:searchMarktercode,
               // startDate:startDate,
               // endDate:endDate,
             },
@@ -172,6 +175,7 @@ if (currentPage2 > 1) {
           limit: 30,
           paytype: searchPaytype,
           keyword:clientFilter,
+          marketerCode:searchMarktercode,
           // startDate:startDate,
           // endDate:endDate,
         },
@@ -203,6 +207,7 @@ if (currentPage2 < numberOfPages2) {
           limit: 30,
           paytype: searchPaytype,
           keyword:clientFilter,
+          marketerCode:searchMarktercode,
           // startDate:startDate,
           // endDate:endDate,
         },
@@ -235,6 +240,7 @@ try {
       limit: 5000,
       paytype: searchPaytype,
       keyword: clientFilter,
+      marketerCode:searchMarktercode,
       // startDate: startDate,
       // endDate: endDate,
     },
@@ -250,18 +256,19 @@ try {
   const dataToExport = response.data.data.map((item, index) => {
     return [
       item.created_at ? item.created_at.slice(0, 10) : '_',
-      item.user && item.user.name ? item.user.name : '_',
-      item.company === "anwan" ? 'gotex' : item.company || '_',
-      item.data && item.data.awb_no ? item.data.awb_no : (item.data && item.data.data && item.data.data.expressNo ? item.data.data.expressNo : (item.data && item.data.Items && item.data.Items[0]?.Barcode ? item.data.Items[0].Barcode : (item.data && item.data.waybill ? item.data.waybill : (item.data && item.data.data && item.data.data.billCode ? item.data.data.billCode : (item.data && item.data.orderTrackingNumber ? item.data.orderTrackingNumber : (item.data && item.data.Shipments && item.data.Shipments[0]?.ID ? item.data.Shipments[0].ID : (item.data && item.data.sawb ? item.data.sawb : '_'))))))),
+      item.p_name || '_',
+      item.c_name || '_',
       item.status || '_',
       item.paytype || '_',
-      item.user && item.user.mobile || '_',
-      item.user && item.user.email || '_',
       item.price || '_',
+      item.codPrice || '_',
+      item.weight || '_',
+      item.quantity || '_',
+      item.marketerCode || '_',
     ];
   });
 
-  const ws = XLSX.utils.aoa_to_sheet([[ 'التاريخ', 'العميل', 'شركة الشحن', 'رقم التتبع', 'حالة الشحنة', 'طريقة الدفع', 'الهاتف', 'الايميل', 'السعر'], ...dataToExport]);
+  const ws = XLSX.utils.aoa_to_sheet([[ 'التاريخ', 'المرسل', 'المستلم ', 'حالة الشحنة', 'طريقة الدفع', 'السعر', 'سعر الcod', 'الوزن','الكمية','كود المدخلة'], ...dataToExport]);
 
   ws['!cols'] = [
     { wch: 18 },{ wch: 18 },{ wch: 18 },
@@ -302,12 +309,15 @@ try {
 </select> 
        </div>
        <div className="col-md-4">
-       <div className="text-center mt-1">
-        <button className="btn btn-lightblue2 m-1" onClick={getSearchShipmentsAdmin}>
+          <input className='form-control' type="search" 
+          placeholder='كود المدخلة' value={searchMarktercode} onChange={(e) => setSearchMarktercode(e.target.value)} />
+        </div>
+       <div className="text-center">
+       <button className="btn btn-lightblue2 m-1" onClick={getSearchShipmentsAdmin}>
             بحث
         </button>
-        <button className="btn btn-orange" onClick={exportToExcel}>بحث وتصدير ملف اكسيل</button>         
-</div>
+        <button className="btn btn-orange m-1" onClick={exportToExcel}>بحث وتصدير ملف اكسيل</button>         
+
        </div>
         
         
@@ -341,23 +351,31 @@ try {
           <table className="table" id="table-to-export">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">التاريخ</th>
-                <th scope="col">العميل</th>
-                <th scope="col">
-                  شركة الشحن</th>
-                {/* <th scope="col">
-                  رقم التتبع</th> */}
-                <th scope="col">
-                  حالة الشحنة </th>
-                <th scope="col">
-                  طريقة الدفع</th>
-                <th scope="col">
-                  الهاتف</th>
-                <th scope="col">
-                  الايميل</th>
-                <th scope="col">
-                  السعر</th>
+              <th scope="col">#</th>
+            <th scope="col">التاريخ</th>
+            <th scope="col">المرسل</th>
+            <th scope="col">
+              المستلم </th>
+            {/* <th scope="col">
+              رقم التتبع</th> */}
+            <th scope="col">
+              حالة الشحنة </th>
+            <th scope="col">
+              طريقة الدفع</th>
+            {/* <th scope="col">
+              الهاتف</th>
+            <th scope="col">
+              الايميل</th> */}
+            <th scope="col">
+              السعر</th>
+              <th scope="col">
+              سعر الcod</th>
+              <th scope="col">
+              الوزن</th>
+              <th scope="col">
+              الكمية</th>
+              <th scope="col">
+              كود المدخلة</th>
                 
                 {/* <th scope="col">id_الفاتورة</th>   */}
                 <th scope="col"></th>              
@@ -365,54 +383,59 @@ try {
             </thead>
              <tbody>
             {shipmentsAdmin && shipmentsAdmin.map((item, index) => (
-  <tr key={index} className={item.status === "canceled" ? 'cancel' : ''}>
-    {loading ? (
-      <td>
-        <i className="fa-solid fa-spinner fa-spin"></i>
-      </td>
-    ) : (
-      <>
-        <td>{index+1}</td>
-                {
-//                 item.createdate ? (<td>{item.createdate.slice(0, 10)}</td>
-// ) : item.data && item.data.createDate ? (
-//   <td>{item.data.createDate.slice(0, 10)}</td>):
-   item.created_at ? (
-    <td>{item.created_at.slice(0, 10)}</td>) : (<td>_</td>)}
-                {item.user && item.user.name ? <td>{item.user.name}</td> : <td>_</td>}
-                {item.company ==="anwan"?<td>gotex</td>:<td>{item.company}</td>}
-                {/* {item.data && item.data.awb_no ? (
-  <td>{item.data.awb_no}</td>
-): item.data.data && item.data.data.expressNo? (
-  <td>{item.data.data.expressNo}</td>
-): item.data && item.data.Items && item.data.Items[0]?.Barcode? (
-  <td>{item.data.Items[0].Barcode}</td>
-)
+ <tr key={index} className={item.status === "canceled" ? 'cancel' : ''}>
+ {loading ? (
+   <td>
+     <i className="fa-solid fa-spinner fa-spin"></i>
+   </td>
+ ) : (
+   <>
+     <td>{index+1}</td>
+             {
+ //                 item.createdate ? (<td>{item.createdate.slice(0, 10)}</td>
+ // ) : item.data && item.data.createDate ? (
+ //   <td>{item.data.createDate.slice(0, 10)}</td>):
+ item.created_at ? (
+ <td>{item.created_at.slice(0, 10)}</td>) : (<td>_</td>)}
+       {item.p_name ? <td>{item.p_name}</td> : <td>_</td>}
+       {item.c_name ? <td>{item.c_name}</td> : <td>_</td>}
+             {/* {item.data && item.data.awb_no ? (
+ <td>{item.data.awb_no}</td>
+ ): item.data.data && item.data.data.expressNo? (
+ <td>{item.data.data.expressNo}</td>
+ ): item.data && item.data.Items && item.data.Items[0]?.Barcode? (
+ <td>{item.data.Items[0].Barcode}</td>
+ )
  : item.data && item.data.waybill ? (
-  <td>{item.data.waybill}</td>
-) :item.data.data && item.data.data.billCode?(
-    <td>{item.data.data.billCode}</td>
-) : item.data && item.data.orderTrackingNumber ? (
-  <td>{item.data.orderTrackingNumber}</td>
-) : item.data && item.data.Shipments && item.data.Shipments[0]?.ID ? (
-  <td>{item.data.Shipments[0].ID}</td>
-) : item.data && item.data.sawb ? (
-  <td>{item.data.sawb}</td>
-) : (
-  <td>_</td>
-)} */}
-               {item.status?<td className={item.status=== "canceled" ?' text-danger fw-bold':''}>{item.status}</td>:<td>_</td>}
-               
-                {item.paytype?<td>{item.paytype}</td>:<td>_</td>}
-
-                {item.user && item.user.mobile?<td>{item.user.mobile}</td>:<td>_</td>}
-                {item.user && item.user.email?<td>{item.user.email}</td>:<td>_</td>}
-                {item.price?<td>{item.price}</td>:<td>_</td>}
-        {item.status=== "canceled" ?<td><span className='text-center text-danger fw-bold'> x </span> </td> : <td></td>}
+ <td>{item.data.waybill}</td>
+ ) :item.data.data && item.data.data.billCode?(
+ <td>{item.data.data.billCode}</td>
+ ) : item.data && item.data.orderTrackingNumber ? (
+ <td>{item.data.orderTrackingNumber}</td>
+ ) : item.data && item.data.Shipments && item.data.Shipments[0]?.ID ? (
+ <td>{item.data.Shipments[0].ID}</td>
+ ) : item.data && item.data.sawb ? (
+ <td>{item.data.sawb}</td>
+ ) : (
+ <td>_</td>
+ )} */}
+            {item.status?<td className={item.status=== "canceled" ?' text-danger fw-bold':''}>{item.status}</td>:<td>_</td>}
             
-      </>
-    )}
-  </tr>
+             {item.paytype?<td>{item.paytype}</td>:<td>_</td>}
+ 
+             {/* {item.user && item.user.mobile?<td>{item.user.mobile}</td>:<td>_</td>} */}
+             {/* {item.user && item.user.email?<td>{item.user.email}</td>:<td>_</td>} */}
+             {item.price?<td>{item.price}</td>:<td>_</td>}
+             {item.codPrice?<td>{item.codPrice}</td>:<td>_</td>}
+             {item.weight?<td>{item.weight}</td>:<td>_</td>}
+             {item.quantity?<td>{item.quantity}</td>:<td>_</td>}
+             {item.marketerCode?<td>{item.marketerCode}</td>:<td>_</td>}
+             
+     {item.status=== "canceled" ?<td><span className='text-center text-danger fw-bold'> x </span> </td> : <td></td>}
+         
+   </>
+ )}
+ </tr>
 ))}         
         </tbody>
       </table>

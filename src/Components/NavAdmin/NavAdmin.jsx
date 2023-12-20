@@ -65,6 +65,18 @@ export default function NavAdmin({userData ,logout}) {
                     <span class="text">الشحنات </span>
                 </Link>
             </li> 
+            <li>
+                <Link to="/createAccountMarketer">
+                <i class="fa-solid fa-user-plus bx"></i>
+                    <span class="text">انشاء حساب مدخلة </span>
+                </Link>
+            </li>
+            <li>
+                <Link to="/adminMarketers">
+                <i class="fa-solid fa-users bx"></i>
+                    <span class="text">المدخلات </span>
+                </Link>
+            </li>
             
            
         </ul>

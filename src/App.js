@@ -19,6 +19,12 @@ import UsersListAdmin from './Components/UsersListAdmin/UsersListAdmin';
 import LayoutAdmin from './Components/LayoutAdmin/LayoutAdmin';
 import CompaniesAdmin from './Components/CompaniesAdmin/CompaniesAdmin';
 import ShipmentsAdmin from './Components/ShipmentsAdmin/ShipmentsAdmin';
+import CreateAccountMarketer from './Components/CreateAccountMarketer/CreateAccountMarketer.jsx';
+import AdminMarketers from './Components/AdminMarketers/AdminMarketers.jsx';
+import LayoutMarketers from './Components/LayoutMarketers/LayoutMarketers.jsx';
+import MarketerLogin from './Components/MarketerLogin/MarketerLogin.jsx';
+import MarketerShipments from './Components/MarketerShipments/MarketerShipments.jsx';
+import MarketerConfirmedOrders from './Components/MarketerConfirmedOrders/MarketerConfirmedOrders.jsx';
 
 
 function App() {
@@ -57,7 +63,8 @@ function App() {
     {path:'verifyUser',element:<VerifyUser/>},
     {path:'forgetPassword',element:<ForgetPassword/>},
     {path:'updatePassword/:x',element:<UpdatePassword/>},
-    
+    {path:'marketerLogin',element: <MarketerLogin saveUserData={saveUserData} setuserData={setuserData} userData={userData}/>},
+
     
     {path:'/',element:<Layout setuserData={setuserData} userData={userData}/> ,children:[
         {path:'main',element:<Main/>},
@@ -71,6 +78,12 @@ function App() {
         {path:'userListAdmin',element: <UsersListAdmin userData={userData}/>},
         {path:'companiesAdmin',element: <CompaniesAdmin userData={userData}/>},
         {path:'shipmentsAdmin',element: <ShipmentsAdmin userData={userData}/>},
+        {path:'createAccountMarketer',element: <CreateAccountMarketer userData={userData}/>},
+        {path:'adminMarketers',element: <AdminMarketers userData={userData}/>},
+      ]},
+      {path:'/',element:<LayoutMarketers setuserData={setuserData} userData={userData}/> ,children:[
+        {path:'marketerShipments',element: <MarketerShipments userData={userData}/>},
+        {path:'marketerConfirmedOrders',element: <MarketerConfirmedOrders userData={userData}/>},
       ]},
   ])
   return (
